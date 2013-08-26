@@ -2,6 +2,15 @@
 // http://karma-runner.github.io/0.10/config/configuration-file.html
 
 module.exports = function(config) {
+  var browsers = ['Chrome'];
+  var singleRun = false;
+
+  if(process.env.TRAVIS) {
+    browsers = ['PhantomJS'];
+    singleRun = true;
+  }
+
+
   config.set({
     // base path, that will be used to resolve files and exclude
     basePath: '',
@@ -42,11 +51,11 @@ module.exports = function(config) {
     // - Safari (only Mac)
     // - PhantomJS
     // - IE (only Windows)
-    browsers: ['Chrome'],
+    browsers: browsers,
 
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun: false
+    singleRun: singleRun
   });
 };
