@@ -299,15 +299,15 @@ module.exports = function (grunt) {
         browsers: ['PhantomJS']
       },
       sauce1: {
-        configFile: 'sauce.karma.conf.js',
+        configFile: 'karma.sauce.conf.js',
         browsers: ['SL_Chrome', 'SL_Safari']
       },
       sauce2: {
-        configFile: 'sauce.karma.conf.js',
+        configFile: 'karma.sauce.conf.js',
         browsers: ['SL_Firefox', 'SL_Opera']
       },
       sauce3: {
-        configFile: 'sauce.karma.conf.js',
+        configFile: 'karma.sauce.conf.js',
         browsers: ['SL_IE_10']
       }
     },
@@ -352,13 +352,8 @@ module.exports = function (grunt) {
     ]);
   });
 
-  grunt.registerTask('karma:sauce', [
-    'karma:sauce1',
-    'karma:sauce2',
-    'karma:sauce3'
-  ]);
-
   grunt.registerTask('test:setup', [
+    'jshint',
     'clean:server',
     'concurrent:test',
     'autoprefixer',
@@ -375,9 +370,32 @@ module.exports = function (grunt) {
     'karma:dev'
   ]);
 
+  // Run multiple tests serially, but continue if one of them fails.
+  // Adapted from http://stackoverflow.com/questions/16487681/gruntfile-getting-error-codes-from-programs-serially
+  grunt.registerTask('serialsauce', function() {
+    var done = this.async();
+    var tasks = {'karma:sauce1': 0, 'karma:sauce2': 0, 'karma:sauce3': 0};
+    var success = true;
+    grunt.util.async.forEachSeries(Object.keys(tasks), function(task, next) {
+      grunt.util.spawn({
+          grunt: true,  // use grunt to spawn
+          args: [task], // spawn this task
+          opts: { stdio: 'inherit' } // print to the same stdout
+        }, function(err, result, code) {
+          tasks[task] = code;
+          if(code !== 0) {
+            success = false;
+          }
+          next();
+        });
+    }, function() {
+      done(success);
+    });
+  });
+
   grunt.registerTask('test:sauce', [
     'test:setup',
-    'karma:sauce'
+    'serialsauce'
   ]);
 
   grunt.registerTask('build', [
@@ -396,7 +414,6 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('default', [
-    'jshint',
     'test:phantom',
     'build'
   ]);

@@ -16,8 +16,8 @@ module.exports = function(config) {
     captureTimeout: 10000,
 
     sauceLabs: {
-      username: process.env.SAUCE_USERNAME,
-      accessKey: process.env.SAUCE_ACCESS_KEY,
+      username: 'wnr-hawker',
+      accessKey: 'a5557696-e556-47d6-afad-f661d124b12a',
       startConnect: false,
       tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER || 13,
       testName: 'hawker'
