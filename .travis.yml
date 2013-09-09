@@ -4,6 +4,12 @@ node_js:
     - 0.8
 notifications:
     irc: "irc.freenode.org#generator-travis-ci"
+addons:
+    sauce_connect:
+        username:
+            secure: "QqWeuELiPLSgghwpF9O5v5LT7yNG70IkQF23Uj8Y1MO8N9wvaNcatrK+ZWqGj9oZDeele27KlkvD6XfdhhQg3Pb6MS2LLxs5LbPDAtZzgipc0NiFZNSNuvQr+N+v1GwGnzyH5XpG75tN+aS/u1BG3n7sH2eYZbjHZLqKXWX4o3A="
+        access_key:
+            secure: "bbUzssC6yJBPCeGA5dFupEwM/z6RvdN6iR1yzKNlGZM/Euliifh5phP6mfA9\nfXRd+ej4pohpq3zkvMwBQAHP79SqZlqH8UuhDDDjDnaeQ/Vg3TLSxk1aMgNg\nfMS/VteznJBMqtD8Jp98eC14qdiUHY9KyghvEkqey5Vv21UZ+BI="
 before_script:
     # install dependencies
     - gem update --system
@@ -12,4 +18,4 @@ before_script:
 script:
     # We want to gate on passing tests and a successful build
     - bower install
-    - grunt
+    - grunt test:sauce

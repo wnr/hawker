@@ -285,9 +285,30 @@ module.exports = function (grunt) {
       ]
     },
     karma: {
-      unit: {
-        configFile: 'karma.conf.js',
-        singleRun: true
+      options: {
+        configFile: 'karma.conf.js'
+      },
+      dev: {
+        singleRun: false,
+        autoWatch: true,
+        browsers: ['Chrome']
+      },
+      phantom: {
+        singleRun: true,
+        autoWatch: false,
+        browsers: ['PhantomJS']
+      },
+      sauce1: {
+        configFile: 'sauce.karma.conf.js',
+        browsers: ['SL_Chrome', 'SL_Safari']
+      },
+      sauce2: {
+        configFile: 'sauce.karma.conf.js',
+        browsers: ['SL_Firefox', 'SL_Opera']
+      },
+      sauce3: {
+        configFile: 'sauce.karma.conf.js',
+        browsers: ['SL_IE_10']
       }
     },
     cdnify: {
@@ -331,12 +352,32 @@ module.exports = function (grunt) {
     ]);
   });
 
-  grunt.registerTask('test', [
+  grunt.registerTask('karma:sauce', [
+    'karma:sauce1',
+    'karma:sauce2',
+    'karma:sauce3'
+  ]);
+
+  grunt.registerTask('test:setup', [
     'clean:server',
     'concurrent:test',
     'autoprefixer',
-    'connect:test',
-    'karma'
+    'connect:test'
+  ]);
+
+  grunt.registerTask('test', [
+    'test:setup',
+    'karma:phantom'
+  ]);
+
+  grunt.registerTask('test:dev', [
+    'test:setup',
+    'karma:dev'
+  ]);
+
+  grunt.registerTask('test:sauce', [
+    'test:setup',
+    'karma:sauce'
   ]);
 
   grunt.registerTask('build', [
@@ -356,7 +397,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', [
     'jshint',
-    'test',
+    'test:phantom',
     'build'
   ]);
 };
